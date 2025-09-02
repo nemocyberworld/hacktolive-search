@@ -1,0 +1,11 @@
+{
+  "label": "Deep Web",
+  "groups": [
+    {
+      "label": "Databases & Portals",
+      "engines": [
+        { "name": "Wayback Machine", "url": "https://web.archive.org/web/*/{q}", "desc": "Historic snapshots." }
+      ]
+    }
+  ]
+}

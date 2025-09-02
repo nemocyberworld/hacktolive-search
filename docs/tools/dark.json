@@ -1,0 +1,13 @@
+{
+  "label": "Dark Web (Tor)",
+  "groups": [
+    {
+      "label": "Tor Directories",
+      "engines": [
+        { "name": "DuckDuckGo (.onion)", "url": "https://duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion/?q={q}", "desc": "Private search over Tor." },
+        { "name": "Ahmia (clearnet)", "url": "https://ahmia.fi/search/?q={q}", "desc": "Hidden service directory." },
+        { "name": "Ahmia (.onion)", "url": "http://msydqstlz2kzerdg.onion/search/?q={q}", "desc": "Onion mirror of Ahmia." }
+      ]
+    }
+  ]
+}

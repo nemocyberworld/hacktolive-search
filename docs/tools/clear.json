@@ -1,0 +1,20 @@
+{
+  "label": "Clear Web",
+  "groups": [
+    {
+      "label": "Search Engines",
+      "engines": [
+        { "name": "DuckDuckGo", "url": "https://duckduckgo.com/?q={q}", "desc": "Private search with bangs." },
+        { "name": "Startpage", "url": "https://www.startpage.com/do/search?q={q}", "desc": "Google results via proxy." },
+        { "name": "Brave Search", "url": "https://search.brave.com/search?q={q}", "desc": "Independent index." }
+      ]
+    },
+    {
+      "label": "Academic",
+      "engines": [
+        { "name": "Google Scholar", "url": "https://scholar.google.com/scholar?q={q}", "desc": "Articles & citations." },
+        { "name": "Semantic Scholar", "url": "https://www.semanticscholar.org/search?q={q}", "desc": "AI-aided discovery." }
+      ]
+    }
+  ]
+}

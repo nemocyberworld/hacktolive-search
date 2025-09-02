@@ -1,1 +1,495 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nemo’s Eye — Deep & Dark Web Search Tool</title>
+  <meta name="description" content="Full-window, privacy-first meta search. Build links for clear, deep, and dark web tools with file-type filters.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { display: ['Inter','ui-sans-serif','system-ui'] },
+          boxShadow: { glow: '0 0 0 1px rgb(99 102 241 / .4), 0 0 30px rgb(99 102 241 / .25)' },
+          backgroundImage: {
+            mesh: 'radial-gradient(60% 60% at 20% 10%, rgba(99,102,241,.25), transparent 60%), radial-gradient(40% 40% at 80% 30%, rgba(236,72,153,.20), transparent 60%), radial-gradient(50% 50% at 50% 90%, rgba(34,197,94,.18), transparent 60%)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html,body{height:100%;margin:0} body{display:flex;flex-direction:column}
+    *{scrollbar-width:thin;scrollbar-color:#3f3f46 transparent}
+    *::-webkit-scrollbar{height:8px;width:8px} *::-webkit-scrollbar-thumb{background:#3f3f46;border-radius:999px}
 
+    /* Tool card hover + layout (Open button on right) */
+    .tool-card{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:.75rem;
+      border:1px solid rgba(39,39,42,.7);
+      background: rgba(9,9,11,.4);
+      border-radius:.75rem;
+      padding:.75rem;
+      transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, border-color .18s ease;
+    }
+    .tool-card:hover{
+      transform: translateY(-2px);
+      background: rgba(24,24,27,.6);
+      border-color: rgba(99,102,241,.5);
+      box-shadow: 0 0 0 1px rgba(99 102 241 / .4), 0 0 30px rgb(99 102 241 / .25);
+    }
+    .open-btn{
+      border:1px solid rgba(39,39,42,1);
+      border-radius:.5rem;
+      padding:.5rem .75rem;
+      display:inline-flex; align-items:center; gap:.5rem;
+      text-decoration:none; font-size:.875rem;
+      transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+      background: transparent; color: inherit;
+      white-space:nowrap;
+    }
+    .open-btn:hover{ background:#4f46e5; border-color:#6366f1; color:#fff; }
+
+    /* Buttons & helpers */
+    .btn{ border-radius:.75rem; background:#4f46e5; color:#fff; padding:.5rem 1rem; font-size:.875rem; font-weight:600; box-shadow: 0 0 0 1px rgb(99 102 241 / .4), 0 0 30px rgb(99 102 241 / .25); }
+    .btn:hover{ background:#6366f1; } .btn:active{ background:#4338ca; }
+    .btn-ghost{ background:rgba(39,39,42,.6); border:1px solid #3f3f46; box-shadow:none; }
+    .btn-ghost:hover{ background:#3f3f46; }
+    .muted{ font-size:.75rem; color:#a1a1aa; }
+    .tag{ font-size:.625rem; padding:.125rem .375rem; border-radius:.375rem; background:#27272a; border:1px solid #3f3f46; }
+    .segmented input{ display:none; }
+    .segmented label{
+      cursor:pointer; user-select:none;
+      padding:.375rem .75rem; border-radius:.75rem; border:1px solid #3f3f46;
+      background:rgba(24,24,27,.6); color:#d4d4d8; font-size:.8rem;
+      transition: background .15s, border-color .15s, color .15s;
+    }
+    .segmented input:checked + label{
+      background:#4f46e5; border-color:#6366f1; color:#fff;
+    }
+    /* Advanced pill checkboxes */
+    .pill-check{ position:relative; display:inline-flex; align-items:center; gap:.5rem; padding:.35rem .6rem; border-radius:.75rem; border:1px solid #3f3f46; background:rgba(24,24,27,.6); font-size:.8rem; cursor:pointer; }
+    .pill-check input{ display:none; }
+    .pill-check.active{ background:#1f2937; border-color:#6366f1; box-shadow: 0 0 0 1px rgb(99 102 241 / .4); }
+  </style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 min-h-screen bg-mesh">
+  <!-- backdrop -->
+  <div aria-hidden class="pointer-events-none fixed inset-0 [mask-image:radial-gradient(circle_at_center,black,transparent_70%)]">
+    <div class="absolute inset-0 opacity-[.08]" style="background-image:linear-gradient(transparent 0, transparent 31px, rgba(255,255,255,.06) 32px),linear-gradient(90deg, transparent 0, transparent 31px, rgba(255,255,255,.06) 32px); background-size:32px 32px;"></div>
+  </div>
+
+  <!-- Focus overlay (default ON) -->
+  <section id="focusOverlay" class="fixed inset-0 z-40 flex items-center justify-center px-6 bg-zinc-950/80 backdrop-blur-sm">
+    <div class="max-w-3xl w-full">
+      <h1 class="text-center text-4xl md:text-6xl font-extrabold font-display leading-tight">
+        <span class="bg-gradient-to-r from-indigo-300 via-fuchsia-300 to-emerald-300 bg-clip-text text-transparent">Nemo's Eye</span>
+      </h1>
+      <p class="mt-2 text-center text-zinc-400">HackToLive Search Engines — Boundless Exploration of the Clear, Deep, and Dark Web.</p>
+      <div class="mt-6 flex items-center gap-3">
+        <div class="relative flex-1">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="qFocus" type="text" spellcheck="false" autofocus placeholder="e.g., sustainable finance Bangladesh, APT report filetype:pdf"
+                 class="w-full rounded-2xl bg-zinc-950/70 border border-zinc-800 pl-11 pr-12 py-4 text-lg outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400" />
+        </div>
+        <button id="btnFocusGo" type="button" class="shrink-0 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 px-5 py-4 text-sm font-semibold shadow-glow">
+          Find tools
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <main class="flex-1 flex flex-col w-full h-full">
+    <div class="flex-1 overflow-y-auto px-6 py-6 md:py-10 md:px-12 w-full">
+      <header class="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div class="space-y-2">
+          <!-- Tor button -->
+          <button id="btnTor"
+            class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-indigo-600/10 border border-indigo-500/30 text-[11px] uppercase tracking-wide text-indigo-300 hover:bg-indigo-600/20 hover:border-indigo-400/50">
+            Use Tor — Dive Deeper
+          </button>
+          <h1 class="text-4xl md:text-6xl font-extrabold font-display leading-tight">
+            <span class="bg-gradient-to-r from-indigo-300 via-fuchsia-300 to-emerald-300 bg-clip-text text-transparent">Nemo's Eye</span>
+          </h1>
+          <p class="text-zinc-400 max-w-prose">HackToLive lets you build search links across Clear, Deep, and Dark Web tools — no scraping, no servers, just raw URLs.</p>
+        </div>
+        <button id="openHelp" type="button" class="rounded-xl border border-zinc-800/80 bg-zinc-900/60 hover:bg-zinc-800/60 px-3 py-2 text-sm">Help</button>
+      </header>
+
+      <section class="rounded-2xl border border-zinc-800/80 bg-zinc-900/50 backdrop-blur supports-[backdrop-filter]:bg-zinc-900/40 shadow-[0_10px_40px_rgba(0,0,0,.35)]">
+        <div class="p-6 md:p-8 space-y-8">
+          <!-- Category & Query row (centered) -->
+          <div class="grid gap-4 md:grid-cols-[auto,1fr,auto] items-center justify-items-center w-full max-w-4xl mx-auto">
+            <!-- Segmented category control -->
+            <fieldset class="segmented flex items-center gap-2 justify-self-center">
+              <input type="radio" name="cat" id="cat-clear" value="clear" checked>
+              <label for="cat-clear" title="Surface/Clear Web">Clear</label>
+              <input type="radio" name="cat" id="cat-deep" value="deep">
+              <label for="cat-deep" title="Not indexed; logins/databases">Deep</label>
+              <input type="radio" name="cat" id="cat-dark" value="dark">
+              <label for="cat-dark" title="Tor / .onion">Dark</label>
+            </fieldset>
+
+            <!-- Query -->
+            <div class="relative w-full justify-self-center">
+              <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input id="q" type="text" spellcheck="false" placeholder="e.g., ransomware TTPs 2024, site:*.gov procurement pdf"
+                     class="w-full rounded-xl bg-zinc-950/60 border border-zinc-800 pl-11 pr-12 py-3 text-base outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-400" />
+            </div>
+
+            <button id="btnGo" type="button" class="btn justify-self-center">Find tools</button>
+          </div>
+
+          <!-- Filters -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+              <h3 class="text-sm font-semibold text-zinc-200">Filters</h3>
+              <button id="clearFilters" type="button" class="text-xs px-2 py-1 rounded border border-zinc-700 hover:bg-zinc-800">Clear filters</button>
+            </div>
+
+            <!-- Quick type (radio) -->
+            <div class="segmented flex items-center gap-2 flex-wrap" id="quickType">
+              <input type="radio" name="ft" id="ft-any" value="any" checked><label for="ft-any">Any</label>
+              <input type="radio" name="ft" id="ft-pdf" value="pdf"><label for="ft-pdf">PDF</label>
+              <input type="radio" name="ft" id="ft-docs" value="docs"><label for="ft-docs">Docs</label>
+              <input type="radio" name="ft" id="ft-sheets" value="sheets"><label for="ft-sheets">Sheets</label>
+              <input type="radio" name="ft" id="ft-slides" value="slides"><label for="ft-slides">Slides</label>
+              <input type="radio" name="ft" id="ft-images" value="images"><label for="ft-images">Images</label>
+              <input type="radio" name="ft" id="ft-audio" value="audio"><label for="ft-audio">Audio</label>
+              <input type="radio" name="ft" id="ft-video" value="video"><label for="ft-video">Video</label>
+              <input type="radio" name="ft" id="ft-archives" value="archives"><label for="ft-archives">Archives</label>
+              <input type="radio" name="ft" id="ft-code" value="code"><label for="ft-code">Code</label>
+              <input type="radio" name="ft" id="ft-text" value="text"><label for="ft-text">Text</label>
+              <input type="radio" name="ft" id="ft-data" value="data"><label for="ft-data">Data</label>
+            </div>
+
+            <!-- Advanced (multi-select groups + custom exts) -->
+            <details class="rounded-xl border border-zinc-800 bg-zinc-900/40 p-3">
+              <summary class="cursor-pointer text-sm text-zinc-300">Advanced file types (combine groups & custom extensions)</summary>
+              <div class="mt-3 space-y-3">
+                <div class="flex flex-wrap gap-2" id="advGroups">
+                  <label class="pill-check"><input type="checkbox" value="pdf"><span>PDF</span></label>
+                  <label class="pill-check"><input type="checkbox" value="docs"><span>Docs</span></label>
+                  <label class="pill-check"><input type="checkbox" value="sheets"><span>Sheets</span></label>
+                  <label class="pill-check"><input type="checkbox" value="slides"><span>Slides</span></label>
+                  <label class="pill-check"><input type="checkbox" value="images"><span>Images</span></label>
+                  <label class="pill-check"><input type="checkbox" value="audio"><span>Audio</span></label>
+                  <label class="pill-check"><input type="checkbox" value="video"><span>Video</span></label>
+                  <label class="pill-check"><input type="checkbox" value="archives"><span>Archives</span></label>
+                  <label class="pill-check"><input type="checkbox" value="code"><span>Code</span></label>
+                  <label class="pill-check"><input type="checkbox" value="text"><span>Text</span></label>
+                  <label class="pill-check"><input type="checkbox" value="data"><span>Data</span></label>
+                </div>
+                <div class="flex items-center gap-2">
+                  <label for="ftCustom" class="text-sm text-zinc-300">Custom extensions</label>
+                  <input id="ftCustom" type="text" placeholder="e.g., ipynb, parquet, svg"
+                         class="flex-1 rounded-lg bg-zinc-950/60 border border-zinc-800 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400">
+                </div>
+                <p class="muted">Tip: separate multiple with comma or space. We’ll add <code>filetype:</code> for each.</p>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="border-t border-zinc-800/70"></div>
+
+        <div class="p-6 md:p-8">
+          <div id="engines" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="mt-auto py-6 text-center text-xs text-zinc-500">
+      <p class="flex flex-wrap items-center justify-center gap-2">
+        <span>&copy; <span id="year"></span></span>
+        <span class="hidden sm:inline">•</span>
+        <span>Built by
+          <a href="https://github.com/nemocyberworld" target="_blank" rel="noopener noreferrer"
+             class="text-indigo-400 hover:text-indigo-300 underline underline-offset-2">
+            Captain Nemo
+          </a>
+        </span>
+        <span class="hidden sm:inline">•</span>
+        <span>In collaboration with
+          <a href="https://hacktolive.net" target="_blank" rel="noopener noreferrer"
+             class="text-indigo-400 hover:text-indigo-300 underline underline-offset-2">
+            HackToLive Academy
+          </a>
+        </span>
+      </p>
+    </footer>
+    <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  </main>
+
+  <!-- Help dialog -->
+  <dialog id="helpDialog" class="backdrop:bg-black/60 rounded-2xl p-0 border border-zinc-800 bg-zinc-900 text-zinc-100 w-[min(90vw,700px)]">
+    <div class="p-6 space-y-4">
+      <div class="flex items-center justify-between"><h3 class="text-lg font-semibold">How it works</h3><button id="closeHelp" type="button" class="rounded-lg border border-zinc-700 px-3 py-1.5 text-sm hover:bg-zinc-800">Close</button></div>
+      <ol class="list-decimal list-inside text-sm text-zinc-300 space-y-2">
+        <li>Select a category: <strong>Clear</strong>, <strong>Deep</strong>, or <strong>Dark</strong>.</li>
+        <li>Choose a <strong>file-type filter</strong> (Quick Type or Advanced/custom).</li>
+        <li>Enter a query and click <em>Find tools</em> (or press <kbd>Enter</kbd>).</li>
+        <li>Open individual tools.</li>
+        <li>Client-only: links are generated locally; no scraping or tracking.</li>
+      </ol>
+    </div>
+  </dialog>
+
+  <!-- Tor dialog (fixed class) -->
+  <dialog id="torDialog" class="backdrop:bg-black/60 rounded-2xl p-0 border border-zinc-800 bg-zinc-900 text-zinc-100 w-[min(90vw,520px)]">
+    <div class="p-6 space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-semibold">Open with Tor</h3>
+        <button id="torClose" type="button" class="rounded-lg border border-zinc-700 px-3 py-1.5 text-sm hover:bg-zinc-800">Close</button>
+      </div>
+      <p class="text-sm text-zinc-300">We’ll use this link:</p>
+      <code id="torTarget" class="block text-xs break-all text-indigo-300 bg-zinc-950/60 border border-zinc-800 rounded p-2"></code>
+      <div class="flex flex-wrap gap-2 pt-1">
+        <button id="torOpenDirect" class="btn">Open anyway</button>
+        <button id="torCopy" class="btn btn-ghost">Copy link</button>
+        <button id="torOpenAhmia" class="btn btn-ghost">Open via Ahmia</button>
+      </div>
+      <p class="text-xs text-zinc-400">Tip: Paste the copied link into Tor Browser if it isn’t already set as your default.</p>
+    </div>
+  </dialog>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const FILTER_MAP = {
+      any: [], pdf: ['pdf'],
+      docs: ['doc','docx','odt','rtf','pdf'],
+      sheets: ['xls','xlsx','ods','csv','tsv'],
+      slides: ['ppt','pptx','odp'],
+      images: ['jpg','jpeg','png','gif','webp','svg'],
+      audio: ['mp3','wav','flac','ogg','m4a'],
+      video: ['mp4','mkv','mov','webm','avi'],
+      archives: ['zip','rar','7z','tar','gz','tar.gz'],
+      code: ['ipynb','py','js','ts','java','c','cpp','go','rs','php','rb','cs','sh','ps1','sql','html','css','json','xml','yml','yaml'],
+      text: ['txt','log','md'],
+      data: ['json','xml','yaml','yml','csv','tsv','ndjson']
+    };
+
+    // Cache for fetched tool JSONs
+    const TOOLS_CACHE = {};
+
+    // Strict loader: ONLY uses ./tools/<category>.json (no fallback)
+    async function loadCategoryTools(key){
+      if (TOOLS_CACHE[key]) return TOOLS_CACHE[key];
+      try {
+        const res = await fetch(`./tools/${key}.json`, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Missing tools/${key}.json`);
+        const data = await res.json();
+        if (!data || !Array.isArray(data.groups)) throw new Error('Bad JSON shape');
+        TOOLS_CACHE[key] = data;
+        return data;
+      } catch (err) {
+        console.warn(err.message);
+        const empty = { label: '', groups: [] };
+        TOOLS_CACHE[key] = empty;
+        return empty;
+      }
+    }
+
+    const enginesRoot = document.getElementById('engines');
+    const qInput = document.getElementById('q');
+    const btnGo = document.getElementById('btnGo');
+
+    const focusOverlay = document.getElementById('focusOverlay');
+    const qFocus = document.getElementById('qFocus');
+    const btnFocusGo = document.getElementById('btnFocusGo');
+
+    const openHelpBtn = document.getElementById('openHelp');
+    const helpDialog = document.getElementById('helpDialog');
+    const closeHelpBtn = document.getElementById('closeHelp');
+
+    const catRadios = Array.from(document.querySelectorAll('input[name="cat"]'));
+    const ftRadios = Array.from(document.querySelectorAll('input[name="ft"]'));
+    const advGroups = document.getElementById('advGroups');
+    const ftCustom = document.getElementById('ftCustom');
+    const clearFiltersBtn = document.getElementById('clearFilters');
+
+    // Tor elements
+    const btnTor = document.getElementById('btnTor');
+    const torDialog = document.getElementById('torDialog');
+    const torClose = document.getElementById('torClose');
+    const torOpenDirect = document.getElementById('torOpenDirect');
+    const torCopy = document.getElementById('torCopy');
+    const torOpenAhmia = document.getElementById('torOpenAhmia');
+    const torTarget = document.getElementById('torTarget');
+
+    // Track the most recently interacted external tool URL
+    let lastToolUrl = null;
+
+    const esc = s => s.replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+    const urlFor = (tmpl,q) => tmpl.replace('{q}', encodeURIComponent(q));
+    const currentCategoryKey = () => (catRadios.find(r => r.checked) || {value:'clear'}).value;
+    const currentQuickFilter = () => (ftRadios.find(r => r.checked) || {value:'any'}).value;
+
+    function parseCustomExts(raw){
+      if (!raw) return [];
+      return raw.split(/[\s,]+/).map(s => s.trim().replace(/^\./,'').toLowerCase())
+        .filter(Boolean).filter(s => /^[a-z0-9.+-]{1,12}$/.test(s));
+    }
+    function selectedAdvancedGroups(){
+      const groups = [];
+      advGroups.querySelectorAll('label.pill-check').forEach(lbl => {
+        const input = lbl.querySelector('input[type="checkbox"]');
+        if (input && input.checked) groups.push(input.value);
+      });
+      return groups;
+    }
+    function buildExtSet(){
+      const quick = currentQuickFilter();
+      const set = new Set(FILTER_MAP[quick] || []);
+      selectedAdvancedGroups().forEach(g => (FILTER_MAP[g]||[]).forEach(ext => set.add(ext)));
+      parseCustomExts(ftCustom.value).forEach(ext => set.add(ext));
+      return Array.from(set);
+    }
+    function applyFiletypeFilter(baseQ){
+      const exts = buildExtSet();
+      if (!exts.length || (currentQuickFilter()==='any' && !selectedAdvancedGroups().length && parseCustomExts(ftCustom.value).length===0)) {
+        return baseQ;
+      }
+      const clause = exts.length === 1
+        ? `filetype:${exts[0]}`
+        : `(${exts.map(e => `filetype:${e}`).join(' OR ')})`;
+      return `${baseQ} ${clause}`.trim();
+    }
+
+    function groupCard(group, q){
+      const items = (group.engines || []).map(e => {
+        const url = q ? urlFor(e.url, q) : '#';
+        const isOnion = e.url.includes('.onion');
+        return `
+          <li class="tool-card">
+            <div class="min-w-0">
+              <div class="font-medium">${esc(e.name)}</div>
+              <div class="muted">${esc(e.desc || '')}</div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              ${isOnion ? '<span class="tag">.onion</span>' : ''}
+              <a class="open-btn" href="${esc(url)}" target="_blank" rel="noreferrer noopener">Open</a>
+            </div>
+          </li>`;
+      }).join('');
+      return `
+        <section class="rounded-2xl border border-zinc-800/80 bg-zinc-900/30 p-4">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-base font-semibold">${esc(group.label)}</h2>
+          </div>
+          <ol class="space-y-3">${items || '<li class="muted">No tools yet — add some for this group.</li>'}</ol>
+        </section>`;
+    }
+
+    async function renderCategory(qBase){
+      const q = applyFiletypeFilter(qBase || '');
+      const key = currentCategoryKey();
+      const cat = await loadCategoryTools(key);
+      const blocks = (cat.groups || []).map(g => groupCard(g, q)).join('');
+      enginesRoot.innerHTML = blocks || '<div class="muted">No tools configured for this category.</div>';
+    }
+
+    const hideFocus = () => focusOverlay.classList.add('hidden');
+    const showFocus = () => focusOverlay.classList.remove('hidden');
+
+    async function generateNow(){
+      const qA = qFocus.value.trim();
+      const qB = qInput.value.trim();
+      const inFocus = !focusOverlay.classList.contains('hidden');
+      const q = qA || qB || (inFocus ? qFocus.value.trim() : qInput.value.trim());
+      if (!q){ (inFocus ? qFocus : qInput).focus(); return; }
+      qInput.value = q; // sync
+      await renderCategory(q);
+      hideFocus();
+    }
+
+    // === Tor helpers ===
+    function isTorBrowser(){ return /TorBrowser/i.test(navigator.userAgent); }
+    function isOnion(u){ try { return /\.onion$/i.test(new URL(u).hostname); } catch { return false; } }
+    function showTorDialogFor(targetUrl){
+      torTarget.textContent = targetUrl;
+      if (isOnion(targetUrl)) { torOpenAhmia.classList.remove('hidden'); }
+      else { torOpenAhmia.classList.add('hidden'); }
+      torDialog.showModal();
+    }
+
+    // === Event wiring ===
+    btnGo.addEventListener('click', e => { e.preventDefault(); generateNow(); });
+    qInput.addEventListener('keydown', e => { if (e.key === 'Enter') generateNow(); });
+    btnFocusGo.addEventListener('click', e => { e.preventDefault(); generateNow(); });
+    qFocus.addEventListener('keydown', e => { if (e.key === 'Enter') generateNow(); });
+
+    catRadios.forEach(r => r.addEventListener('change', () => renderCategory((qInput.value || qFocus.value).trim())));
+    ftRadios.forEach(r => r.addEventListener('change', () => renderCategory((qInput.value || qFocus.value).trim())));
+
+    // Track last clicked tool link
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a.open-btn');
+      if (a && a.href) {
+        lastToolUrl = a.href;
+      }
+    });
+
+    // Tor button grabs the current tab URL, unless a tool link was clicked last
+    btnTor.addEventListener('click', () => {
+      const candidate = lastToolUrl || window.location.href;
+      if (isTorBrowser()) {
+        window.open(candidate, '_blank', 'noopener,noreferrer');
+      } else {
+        showTorDialogFor(candidate);
+      }
+    });
+
+    torClose.addEventListener('click', () => torDialog.close());
+    torOpenDirect.addEventListener('click', () => {
+      const url = torTarget.textContent;
+      window.open(url, '_blank', 'noopener,noreferrer');
+    });
+    torCopy.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(torTarget.textContent); torCopy.textContent = 'Copied!'; }
+      catch { torCopy.textContent = 'Copy failed'; }
+      setTimeout(()=> torCopy.textContent = 'Copy link', 1200);
+    });
+    torOpenAhmia.addEventListener('click', () => {
+      const url = 'https://ahmia.fi/search/?q=' + encodeURIComponent(torTarget.textContent);
+      window.open(url, '_blank', 'noopener,noreferrer');
+    });
+
+    // Advanced group pill toggles
+    document.addEventListener('click', (e) => {
+      const lbl = e.target.closest('#advGroups label.pill-check');
+      if (!lbl) return;
+      const cb = lbl.querySelector('input[type="checkbox"]');
+      if (e.target.tagName !== 'INPUT') cb.checked = !cb.checked;
+      lbl.classList.toggle('active', cb.checked);
+      renderCategory((qInput.value || qFocus.value).trim());
+    });
+    // Initialize pill active state
+    document.querySelectorAll('#advGroups label.pill-check').forEach(lbl => {
+      const cb = lbl.querySelector('input[type="checkbox"]');
+      lbl.classList.toggle('active', cb.checked);
+    });
+
+    ftCustom.addEventListener('input', () => renderCategory((qInput.value || qFocus.value).trim()));
+
+    clearFiltersBtn.addEventListener('click', () => {
+      document.getElementById('ft-any').checked = true;
+      document.querySelectorAll('#advGroups input[type="checkbox"]').forEach(cb => {
+        cb.checked = false; cb.closest('label').classList.remove('active');
+      });
+      ftCustom.value = '';
+      renderCategory((qInput.value || qFocus.value).trim());
+    });
+
+    // Init
+    showFocus();
+    renderCategory('');
+  });
+  </script>
+</body>
+</html>
