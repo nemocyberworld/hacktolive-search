@@ -6,15 +6,70 @@
       "engines": [
         { "name": "DuckDuckGo", "url": "https://duckduckgo.com/?q={q}", "desc": "Private search with bangs." },
         { "name": "Startpage", "url": "https://www.startpage.com/do/search?q={q}", "desc": "Google results via proxy." },
-        { "name": "Brave Search", "url": "https://search.brave.com/search?q={q}", "desc": "Independent index." }
+        { "name": "Brave Search", "url": "https://search.brave.com/search?q={q}", "desc": "Independent index." },
+        { "name": "SearXNG (searx.be)", "url": "https://searx.be/search?q={q}", "desc": "Open-source metasearch." },
+        { "name": "Mojeek", "url": "https://www.mojeek.com/search?q={q}", "desc": "Independent crawler." },
+        { "name": "Qwant", "url": "https://www.qwant.com/?q={q}", "desc": "EU privacy search." },
+        { "name": "Kagi", "url": "https://kagi.com/search?q={q}", "desc": "Subscriber search engine." }
       ]
     },
     {
       "label": "Academic",
       "engines": [
         { "name": "Google Scholar", "url": "https://scholar.google.com/scholar?q={q}", "desc": "Articles & citations." },
-        { "name": "Semantic Scholar", "url": "https://www.semanticscholar.org/search?q={q}", "desc": "AI-aided discovery." }
+        { "name": "Semantic Scholar", "url": "https://www.semanticscholar.org/search?q={q}", "desc": "AI-aided discovery." },
+        { "name": "BASE", "url": "https://www.base-search.net/Search/Results?lookfor={q}", "desc": "Repos & OA content." },
+        { "name": "CORE", "url": "https://core.ac.uk/search?q={q}", "desc": "Open research hub." },
+        { "name": "arXiv", "url": "https://arxiv.org/search/?query={q}&searchtype=all", "desc": "Preprints in STEM." }
+      ]
+    },
+    {
+      "label": "Files & Archives",
+      "engines": [
+        { "name": "Internet Archive", "url": "https://archive.org/search.php?query={q}", "desc": "Books, audio, video, data." },
+        { "name": "Wayback Machine", "url": "https://web.archive.org/web/*/{q}", "desc": "Historic snapshots." },
+        { "name": "PublicWWW (code)", "url": "https://publicwww.com/websites/%22{q}%22/", "desc": "Find strings in sites." },
+        { "name": "FilePursuit", "url": "https://filepursuit.com/pursuit?q={q}", "desc": "Public file index." },
+        { "name": "filetype:pdf (via DDG)", "url": "https://duckduckgo.com/?q=filetype%3Apdf+{q}", "desc": "Quick PDF filter." }
+      ]
+    },
+    {
+      "label": "Tech & Code",
+      "engines": [
+        { "name": "GitHub (Code)", "url": "https://github.com/search?q={q}&type=code", "desc": "Code search." },
+        { "name": "GitHub (Repos)", "url": "https://github.com/search?q={q}&type=repositories", "desc": "Repository search." },
+        { "name": "GitLab", "url": "https://gitlab.com/search?search={q}", "desc": "Projects & code." },
+        { "name": "Sourcegraph", "url": "https://sourcegraph.com/search?q={q}", "desc": "Cross-repo code search." },
+        { "name": "Stack Overflow", "url": "https://stackoverflow.com/search?q={q}", "desc": "Q&A for developers." }
+      ]
+    },
+    {
+      "label": "News & Forums",
+      "engines": [
+        { "name": "Google News", "url": "https://news.google.com/search?q={q}", "desc": "News coverage." },
+        { "name": "Bing News", "url": "https://www.bing.com/news/search?q={q}", "desc": "News search." },
+        { "name": "Reddit", "url": "https://www.reddit.com/search/?q={q}", "desc": "Community discussions." },
+        { "name": "Hacker News (Algolia)", "url": "https://hn.algolia.com/?q={q}", "desc": "HN posts & comments." }
+      ]
+    },
+    {
+      "label": "Images & Video",
+      "engines": [
+        { "name": "DDG Images", "url": "https://duckduckgo.com/?iax=images&ia=images&q={q}", "desc": "Image search." },
+        { "name": "Bing Images", "url": "https://www.bing.com/images/search?q={q}", "desc": "Image search." },
+        { "name": "YouTube", "url": "https://www.youtube.com/results?search_query={q}", "desc": "Video search." },
+        { "name": "Vimeo", "url": "https://vimeo.com/search?q={q}", "desc": "Creative video." }
+      ]
+    },
+    {
+      "label": "Open Data & Government",
+      "engines": [
+        { "name": "Data.gov (US)", "url": "https://catalog.data.gov/dataset?q={q}", "desc": "US open data." },
+        { "name": "EU Open Data", "url": "https://data.europa.eu/en/search?query={q}", "desc": "EU datasets & docs." },
+        { "name": "govinfo (US)", "url": "https://www.govinfo.gov/app/search?q={q}", "desc": "Official publications." },
+        { "name": "SEC EDGAR", "url": "https://www.sec.gov/edgar/search/#/q={q}", "desc": "Company filings." },
+        { "name": "CourtListener", "url": "https://www.courtlistener.com/?q={q}", "desc": "Opinions & dockets." }
       ]
     }
-  ]
+    ]
 }

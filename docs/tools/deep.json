@@ -4,7 +4,63 @@
     {
       "label": "Databases & Portals",
       "engines": [
-        { "name": "Wayback Machine", "url": "https://web.archive.org/web/*/{q}", "desc": "Historic snapshots." }
+        { "name": "Wayback Machine", "url": "https://web.archive.org/web/*/{q}", "desc": "Historic snapshots." },
+        { "name": "archive.today", "url": "https://archive.today/?run=1&url={q}", "desc": "On-demand snapshots (paste a full URL)." }
+      ]
+    },
+    {
+      "label": "Government & Legal",
+      "engines": [
+        { "name": "SEC EDGAR", "url": "https://www.sec.gov/edgar/search/#/q={q}", "desc": "U.S. company filings." },
+        { "name": "CourtListener", "url": "https://www.courtlistener.com/?q={q}", "desc": "Court opinions & dockets (US)." },
+        { "name": "Federal Register", "url": "https://www.federalregister.gov/documents/search?conditions[term]={q}", "desc": "Rules, notices, and proposed regs (US)." }
+      ]
+    },
+    {
+      "label": "Company & Registries",
+      "engines": [
+        { "name": "Companies House (UK)", "url": "https://find-and-update.company-information.service.gov.uk/search?q={q}", "desc": "UK company records." },
+        { "name": "OpenCorporates", "url": "https://opencorporates.com/companies?utf8=%E2%9C%93&q={q}", "desc": "Global company registry search." },
+        { "name": "GLEIF LEI Search", "url": "https://search.gleif.org/#/search/{q}", "desc": "Legal Entity Identifier lookups." }
+      ]
+    },
+    {
+      "label": "Patents & Standards",
+      "engines": [
+        { "name": "Google Patents", "url": "https://patents.google.com/?q={q}", "desc": "Patents & prior art." },
+        { "name": "WIPO PATENTSCOPE", "url": "https://patentscope.wipo.int/search/en/result.jsf?query={q}", "desc": "International patent search." },
+        { "name": "Espacenet (EPO)", "url": "https://worldwide.espacenet.com/patent/search?q={q}", "desc": "Worldwide patent search." }
+      ]
+    },
+    {
+      "label": "Datasets & Catalogs",
+      "engines": [
+        { "name": "Data.gov (US)", "url": "https://catalog.data.gov/dataset?q={q}", "desc": "U.S. open datasets." },
+        { "name": "EU Open Data", "url": "https://data.europa.eu/en/search?query={q}", "desc": "EU institutions datasets." },
+        { "name": "World Bank Data Catalog", "url": "https://datacatalog.worldbank.org/search/dataset?query={q}", "desc": "Global development data." }
+      ]
+    },
+    {
+      "label": "Research Repositories",
+      "engines": [
+        { "name": "Zenodo", "url": "https://zenodo.org/search?q={q}", "desc": "Open research outputs." },
+        { "name": "Figshare", "url": "https://figshare.com/search?q={q}", "desc": "Datasets & research media." },
+        { "name": "Dryad", "url": "https://datadryad.org/search?query={q}", "desc": "Curated datasets." }
+      ]
+    },
+    {
+      "label": "Libraries & Archives",
+      "engines": [
+        { "name": "WorldCat", "url": "https://www.worldcat.org/search?q={q}", "desc": "Global library catalog." },
+        { "name": "HathiTrust", "url": "https://catalog.hathitrust.org/Search/Home?lookfor={q}", "desc": "Digitized books & journals." },
+        { "name": "Internet Archive", "url": "https://archive.org/search?query={q}", "desc": "Books, audio, video, software." }
+      ]
+    },
+    {
+      "label": "Health & Clinical",
+      "engines": [
+        { "name": "PubMed", "url": "https://pubmed.ncbi.nlm.nih.gov/?term={q}", "desc": "Biomedical literature (NCBI)." },
+        { "name": "ClinicalTrials.gov", "url": "https://clinicaltrials.gov/search?term={q}", "desc": "Trial registry & results." }
       ]
     }
   ]

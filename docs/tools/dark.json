@@ -6,7 +6,9 @@
       "engines": [
         { "name": "DuckDuckGo (.onion)", "url": "https://duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion/?q={q}", "desc": "Private search over Tor." },
         { "name": "Ahmia (clearnet)", "url": "https://ahmia.fi/search/?q={q}", "desc": "Hidden service directory." },
-        { "name": "Ahmia (.onion)", "url": "http://msydqstlz2kzerdg.onion/search/?q={q}", "desc": "Onion mirror of Ahmia." }
+        { "name": "Ahmia (.onion)", "url": "http://msydqstlz2kzerdg.onion/search/?q={q}", "desc": "Onion mirror of Ahmia." },
+        { "name": "Onion Search Engine (clearnet)", "url": "https://onionsearchengine.com/search?q={q}", "desc": "Clearnet gateway indexing onion services." },
+        { "name": "DarkSearch (clearnet)", "url": "https://darksearch.io/search?query={q}", "desc": "Onion search (availability may vary)." }
       ]
     }
   ]
